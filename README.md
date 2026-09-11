@@ -52,6 +52,6 @@ Qt/PySide6 dashboard
 
 ---
 
-##Status
+## Status
 
 Work in progress
