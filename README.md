@@ -22,21 +22,36 @@ The objective is not only to test UART commands, but to develop a structured val
 - generating test reports,
 - and providing a dedicated Qt-based test dashboard.
 
-The project follows a test-engineering workflow:
+---
 
-```text
-Requirement
-    ↓
-Test Case
-    ↓
-Stimulus Generation
-    ↓
-STM32 DUT
-    ↓
-Response / Hardware Observation
-    ↓
-Expected vs Actual
-    ↓
-PASS / FAIL
-    ↓
-Logging / Reporting
+## Current Test Coverage
+Functional LED command tests
+Negative command testing
+Parametrized data-driven testing
+Incomplete-frame testing
+Fragmented-frame testing
+Back-to-back command robustness testing
+
+---
+
+## Technologies
+
+STM32F407, Embedded C, STM32 HAL, UART, Python, pytest, pyserial, Git, GitHub
+
+---
+
+## Roadmap
+UART DMA / continuous reception
+Boundary and overflow testing
+Fault injection
+Automated reporting
+Hardware-level validation
+HIL
+CI/CD
+Qt/PySide6 dashboard
+
+---
+
+##Status
+
+Work in progress
