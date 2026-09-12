@@ -1,0 +1,25 @@
+--cpu=Cortex-M4.fp.sp
+"embedded_test_bench\startup_stm32f407xx.o"
+"embedded_test_bench\main.o"
+"embedded_test_bench\stm32f4xx_it.o"
+"embedded_test_bench\stm32f4xx_hal_msp.o"
+"embedded_test_bench\uart_app.o"
+"embedded_test_bench\stm32f4xx_hal_uart.o"
+"embedded_test_bench\stm32f4xx_hal_rcc.o"
+"embedded_test_bench\stm32f4xx_hal_rcc_ex.o"
+"embedded_test_bench\stm32f4xx_hal_flash.o"
+"embedded_test_bench\stm32f4xx_hal_flash_ex.o"
+"embedded_test_bench\stm32f4xx_hal_flash_ramfunc.o"
+"embedded_test_bench\stm32f4xx_hal_gpio.o"
+"embedded_test_bench\stm32f4xx_hal_dma_ex.o"
+"embedded_test_bench\stm32f4xx_hal_dma.o"
+"embedded_test_bench\stm32f4xx_hal_pwr.o"
+"embedded_test_bench\stm32f4xx_hal_pwr_ex.o"
+"embedded_test_bench\stm32f4xx_hal_cortex.o"
+"embedded_test_bench\stm32f4xx_hal.o"
+"embedded_test_bench\stm32f4xx_hal_exti.o"
+"embedded_test_bench\system_stm32f4xx.o"
+--strict --scatter "Embedded_Test_Bench\Embedded_Test_Bench.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "Embedded_Test_Bench.map" -o Embedded_Test_Bench\Embedded_Test_Bench.axf
