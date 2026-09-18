@@ -47,3 +47,20 @@ def dut_serial():
         # fermer COM5 même si un test FAIL
         if ser.is_open:
             ser.close()
+
+@pytest.fixture(scope="session")
+def hil_serial():
+
+    ser = serial.Serial(
+        port="COM7",
+        baudrate=115200,
+        timeout=1,
+        write_timeout=1
+    )
+
+    try:
+        yield ser
+
+    finally:
+        if ser.is_open:
+            ser.close()
