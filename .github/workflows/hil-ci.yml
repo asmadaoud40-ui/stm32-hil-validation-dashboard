@@ -21,6 +21,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Build firmware with Keil
+        run: |
+          & "C:\Users\asmad\AppData\Local\Keil_v5\UV4\UV4.exe" -b "firmware\Embedded_Test_Bench\MDK-ARM\Embedded_Test_Bench.uvprojx"
+
+      - name: Flash STM32 firmware
+        run: |
+          & "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe" `
+          -c port=SWD `
+          -w "firmware\Embedded_Test_Bench\MDK-ARM\Embedded_Test_Bench\Embedded_Test_Bench.hex" `
+          -v `
+          -rst
+
       - name: Run STM32 HIL tests
         run: pytest --html=reports/test_report.html --self-contained-html --junitxml=reports/results.xml
 
