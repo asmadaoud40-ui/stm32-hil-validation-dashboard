@@ -44,3 +44,12 @@ jobs:
           path: |
             reports/test_report.html
             reports/results.xml
+
+      - name: Upload validated firmware
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-firmware
+          path: |
+            firmware/Embedded_Test_Bench/MDK-ARM/Embedded_Test_Bench/Embedded_Test_Bench.hex
+            firmware/Embedded_Test_Bench/MDK-ARM/Embedded_Test_Bench/Embedded_Test_Bench.axf
