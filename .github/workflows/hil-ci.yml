@@ -1,0 +1,34 @@
+name: STM32 HIL CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  hil-test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run STM32 HIL tests
+        run: pytest --html=reports/test_report.html --self-contained-html --junitxml=reports/results.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hil-test-reports
+          path: |
+            reports/test_report.html
+            reports/results.xml
