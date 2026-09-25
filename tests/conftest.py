@@ -1,66 +1,20 @@
-import serial
-import time
+from tools.serial_connection import open_serial_with_retry
 import pytest
 
 
 @pytest.fixture(scope="session")
 def dut_serial():
+    ser = open_serial_with_retry("COM5", 9600)
 
-    # Créer l'objet série sans ouvrir immédiatement le port
-    ser = serial.Serial()
+    yield ser
 
-    # Configuration de la liaison
-    ser.port = "COM5"
-    ser.baudrate = 9600
-    ser.timeout = 2
-    ser.write_timeout = 2
+    ser.close()
 
-    # Essayer d'ouvrir COM5 jusqu'à 5 fois
-    for attempt in range(1, 6):
-
-        try:
-            ser.open()
-            print(f"COM5 opened on attempt {attempt}")
-            break
-
-        except serial.SerialException:
-
-            print(f"COM5 unavailable - attempt {attempt}/5")
-
-            # Si c'était la dernière tentative,
-            # laisser l'erreur remonter vers pytest
-            if attempt == 5:
-                raise
-
-            # Laisser Windows / Bluetooth libérer le port
-            time.sleep(2)
-
-    # Laisser la liaison Bluetooth se stabiliser
-    time.sleep(1)
-
-    try:
-        # Fournir la connexion aux tests
-        yield ser
-
-    finally:
-        # Teardown :
-        # fermer COM5 même si un test FAIL
-        if ser.is_open:
-            ser.close()
 
 @pytest.fixture(scope="session")
 def hil_serial():
+    ser = open_serial_with_retry("COM7", 115200)
 
-    ser = serial.Serial(
-        port="COM7",
-        baudrate=115200,
-        timeout=1,
-        write_timeout=1
-    )
+    yield ser
 
-    try:
-        yield ser
-
-    finally:
-        if ser.is_open:
-            ser.close()
+    ser.close()
