@@ -92,7 +92,7 @@ void UART_App_Process(void){
             if (strcmp(command_buffer, "red on\r") == 0)
             {
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);
-                sprintf(tx_buffer, "LED RED ON");
+                sprintf(tx_buffer, "LED RED ON\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }
@@ -100,7 +100,7 @@ void UART_App_Process(void){
             else if (strcmp(command_buffer, "red off\r") == 0)
             {
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
-                sprintf(tx_buffer, "LED RED OFF");
+                sprintf(tx_buffer, "LED RED OFF\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }
@@ -108,7 +108,7 @@ void UART_App_Process(void){
             else if (strcmp(command_buffer, "green on\r") == 0)
             {
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,GPIO_PIN_SET);
-                sprintf(tx_buffer, "LED GREEN ON");
+                sprintf(tx_buffer, "LED GREEN ON\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }
@@ -116,7 +116,7 @@ void UART_App_Process(void){
             else if (strcmp(command_buffer, "green off\r") == 0)
             {
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,GPIO_PIN_RESET);
-                sprintf(tx_buffer, "LED GREEN OFF");
+                sprintf(tx_buffer, "LED GREEN OFF\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }
@@ -125,7 +125,7 @@ void UART_App_Process(void){
             {
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14, GPIO_PIN_SET);
                 HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,GPIO_PIN_SET );
-                sprintf(tx_buffer,"LED GREEN ON\nLED RED ON");
+                sprintf(tx_buffer,"LED GREEN ON\nLED RED ON\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6, (const uint8_t *)tx_buffer,strlen(tx_buffer));
 						}
@@ -134,14 +134,14 @@ void UART_App_Process(void){
             {
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_RESET);
                 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
-                sprintf(tx_buffer,"LED GREEN OFF\nLED RED OFF");
+                sprintf(tx_buffer,"LED GREEN OFF ;LED RED OFF \r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }
 
             else
             {
-                sprintf(tx_buffer,"ERROR INVALID COMMAND");
+                sprintf(tx_buffer,"ERROR INVALID COMMAND\r\n");
 								tx_busy = 1;
                 HAL_UART_Transmit_DMA(&huart6,(const uint8_t *)tx_buffer,strlen(tx_buffer));
             }

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PySide6.QtCore import QFile
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QPushButton, QPlainTextEdit
+from PySide6.QtWidgets import QApplication, QPushButton, QPlainTextEdit, QLabel
 
 from tools.serial_connection import open_serial_with_retry
 
@@ -29,6 +29,8 @@ green_on_button = window.findChild(QPushButton, "greenonbutton")
 green_off_button = window.findChild(QPushButton, "greenoffbutton")
 all_on_button = window.findChild(QPushButton, "allonbutton")
 all_off_button = window.findChild(QPushButton, "alloffbutton")
+green_led_state_label = window.findChild(QLabel, "greenLedStateLabel")
+red_led_state_label = window.findChild(QLabel, "redLedStateLabel")
 
 serial_console = window.findChild(QPlainTextEdit, "serialConsole")
 
@@ -54,6 +56,18 @@ def read_hil_state():
 
     return hil_serial.readline().decode().strip()
 
+#-------------hardware_monitor-----------------
+
+def update_hardware_monitor(hil_state):
+    if "GREEN=1" in hil_state:
+        green_led_state_label.setText("ON")
+    else:
+        green_led_state_label.setText("OFF")
+
+    if "RED=1" in hil_state:
+        red_led_state_label.setText("ON")
+    else:
+        red_led_state_label.setText("OFF")
 
 # ---------- DUT ----------
 
@@ -71,6 +85,8 @@ def send_dut_command(command):
     hil_state = read_hil_state()
 
     serial_console.appendPlainText(f"[HIL] {hil_state}")
+    
+    update_hardware_monitor(hil_state)
 
 
 # ---------- Button handlers ----------
