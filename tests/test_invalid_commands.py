@@ -1,14 +1,16 @@
 import pytest
+
+
 @pytest.mark.parametrize(
-	"command,expected",
-	[
-		("RED ON\r\n", "ERROR INVALID COMMAND"),      # mauvaise casse
-		("blue on\r\n", "ERROR INVALID COMMAND"),     # commande inconnue
-		("red start\r\n", "ERROR INVALID COMMAND"),   # argument invalide
-		("red  on\r\n", "ERROR INVALID COMMAND"),     # double espace
-		("@@@\r\n", "ERROR INVALID COMMAND"),         # caractères inattendus
-		("\r\n", "ERROR INVALID COMMAND"),            # commande vide
-	]
+    "command, expected",
+    [
+        ("RED ON\r\n", "ERROR INVALID COMMAND"),
+        ("blue on\r\n", "ERROR INVALID COMMAND"),
+        ("red start\r\n", "ERROR INVALID COMMAND"),
+        ("red  on\r\n", "ERROR INVALID COMMAND"),
+        ("@@@\r\n", "ERROR INVALID COMMAND"),
+        ("\r\n", "ERROR INVALID COMMAND"),
+    ]
 )
 def test_invalid_command(dut_serial, command, expected):
 
@@ -17,8 +19,6 @@ def test_invalid_command(dut_serial, command, expected):
     dut_serial.write(command.encode())
     dut_serial.flush()
 
-    response = dut_serial.read(64)
+    response = dut_serial.readline().decode().strip()
 
-    actual = response.decode()
-
-    assert actual == expected
+    assert response == expected

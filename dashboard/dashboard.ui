@@ -431,12 +431,12 @@
          <rect>
           <x>0</x>
           <y>20</y>
-          <width>331</width>
-          <height>121</height>
+          <width>341</width>
+          <height>131</height>
          </rect>
         </property>
         <attribute name="horizontalHeaderDefaultSectionSize">
-         <number>83</number>
+         <number>80</number>
         </attribute>
         <column>
          <property name="text">
