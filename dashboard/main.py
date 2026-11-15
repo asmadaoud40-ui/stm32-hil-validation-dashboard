@@ -44,7 +44,7 @@ REPORTS_DIR = PROJECT_ROOT / "reports"
 CI_CONFIG_PATH = DASHBOARD_DIR / "ci_config.json"
 
 DEFAULT_CI_CONFIG = {
-    "repository": "asmadaoud40-ui/stm32-hil-validation-dashboard",
+    "repository": "asmadaoud40-ui/stm32-hil-validation-ci",
     "workflow_file": "hil-ci.yml",
     "branch": "main",
     "refresh_interval_seconds": 300,
