@@ -1,57 +1,139 @@
 # STM32 HIL Validation Dashboard
 
-Automated firmware validation and Hardware-in-the-Loop test framework for an STM32F407 target using Python, pytest, pyserial, CI/CD, and a Qt-based validation dashboard.
+# STM32 HIL Validation Dashboard
 
-> Status: Work in progress
+## Square-corner and clipping fix
 
----
+This update makes all dashboard surfaces rectangular (0 px corner radius), including the header, panels, status labels, buttons, table, console, and scrollbars. It also increases the LED monitor and campaign-summary row heights, gives the LED state labels and all four counters explicit minimum heights, and adjusts the right-column spacing so that `OFF`, `TOTAL`, `PASSED`, `FAILED`, and `SKIPPED` remain fully visible. The test table is slightly shorter to preserve the serial console and keep the layout within the existing screen footprint.
 
-## Overview
+The STM32 command handling, serial timing behavior, pytest campaigns, report generation, GitHub Actions polling, and workflow YAML are unchanged in this update. Only `dashboard/main.py` needs to be replaced. Close the dashboard, extract the archive into the project root, allow `dashboard/main.py` to overwrite the existing file, and relaunch with `python -u main.py` from the `dashboard` directory.
+A Python-based validation bench for an STM32F407 target. The project combines a Bluetooth serial command link, an Arduino GPIO observer, pytest regression campaigns, local HTML/XML reports, GitHub Actions CI/CD, and a PySide6 dashboard.
 
-This project builds a complete embedded firmware validation environment around a real STM32F407 target.
+## System architecture
 
-The objective is not only to test UART commands, but to develop a structured validation framework capable of:
+- **PC → STM32 DUT:** Python, pytest, and the dashboard send commands through Bluetooth COM5 at 9600 baud. The Bluetooth module is connected to STM32 USART6.
+- **STM32 → PC:** command responses return through USART6 and the Bluetooth serial link on COM5.
+- **GPIO observation:** the Arduino HIL observer reads the DUT GPIO states and communicates with the PC on COM7 at 115200 baud.
+- **Automated validation:** pytest checks command responses and, in the HIL suite, compares them with the physical GPIO states reported by the Arduino.
+- **CI/CD:** `.github/workflows/hil-ci.yml` runs on pushes to `main` on a self-hosted Windows runner. It checks out the repository, installs the test dependencies, builds with Keil, flashes with STM32CubeProgrammer, runs pytest, and uploads reports and validated firmware artifacts.
 
-- generating automated test stimuli,
-- communicating with a real embedded DUT,
-- comparing actual and expected behavior,
-- performing functional and robustness testing,
-- detecting firmware and communication failures,
-- extending validation toward Hardware-in-the-Loop,
-- running regression campaigns,
-- generating test reports,
-- and providing a dedicated Qt-based test dashboard.
+## Project structure
 
----
+```text
+Embedded_Test_Bench_Test/
+├── .github/workflows/hil-ci.yml
+├── dashboard/
+│   ├── dashboard.ui
+│   ├── main.py
+│   └── ci_config.json
+├── firmware/Embedded_Test_Bench/
+├── hil/arduino_hil_observer.ino
+├── reports/
+├── tests/
+├── tools/
+│   ├── serial_connection.py
+│   └── github_actions.py
+├── requirements.txt
+├── requirements-dashboard.txt
+└── pytest.ini
+```
 
-## Current Test Coverage
-Functional LED command tests
-Negative command testing
-Parametrized data-driven testing
-Incomplete-frame testing
-Fragmented-frame testing
-Back-to-back command robustness testing
+## Hardware and serial configuration
 
----
+| Link | PC port | Baud rate | Purpose |
+|---|---:|---:|---|
+| Bluetooth module ↔ STM32 USART6 | COM5 | 9600 | DUT commands and responses |
+| Arduino HIL observer | COM7 | 115200 | GPIO state observation |
 
-## Technologies
+The dashboard releases the serial ports before launching a pytest campaign that needs them, then reconnects them after the campaign. Do not open COM5 or COM7 in another serial terminal while the dashboard or tests are using them.
 
-STM32F407, Embedded C, STM32 HAL, UART, Python, pytest, pyserial, Git, GitHub
+### Serial diagnostic scripts
 
----
+- `tools/serial_connection.py` provides the shared serial-open retry helper used by pytest and the dashboard.
+- `tools/serial_debug.py` isolates a Bluetooth-to-STM32 command/response check on COM5.
+- `tools/test_dual_port.py` opens COM5 and COM7 together, sends a DUT command, then reads the Arduino GPIO observation.
 
-## Roadmap
-UART DMA / continuous reception
-Boundary and overflow testing
-Fault injection
-Automated reporting
-Hardware-level validation
-HIL
-CI/CD
-Qt/PySide6 dashboard
+### Existing test baseline
 
----
+The `reports/results.xml` file included with this project snapshot contains **21 test cases: 21 passed, 0 failed, 0 errors, 0 skipped**. This is the saved baseline report in the archive; it is not a new physical-hardware test run performed after the dashboard update. The 21 cases are distributed across HIL (6), invalid commands (6), LED commands (6), and robustness (3).
 
-## Status
+## Installation
 
-Work in progress
+Use Python 3.13 (the version configured in the GitHub Actions workflow).
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-dashboard.txt
+```
+
+`requirements.txt` contains the CI/test dependencies. `requirements-dashboard.txt` adds PySide6 for the graphical application.
+
+## Launch the dashboard
+
+From the project root:
+
+```powershell
+python -u dashboard\main.py
+```
+
+The dashboard provides:
+
+- manual Red, Green, and All LED commands over Bluetooth COM5;
+- live GPIO state from the Arduino on COM7;
+- separate UART and HIL pytest campaigns;
+- a full regression campaign with JUnit XML and self-contained HTML reports;
+- a table and summary parsed from the most recent local JUnit XML file;
+- links to open the HTML report and reports folder;
+- the latest GitHub Actions run and its Build, Flash, HIL, and report-upload step states.
+
+## Test campaigns
+
+Run from the project root when the physical bench is connected:
+
+```powershell
+python -m pytest tests/test_leds.py tests/test_invalid_commands.py tests/test_robustness.py -q
+python -m pytest tests/test_hil.py -q
+python -m pytest -q --html=reports/test_report.html --self-contained-html --junitxml=reports/results.xml
+```
+
+The dashboard runs these commands asynchronously, so the Qt interface remains responsive while pytest is running.
+
+## Reports
+
+The dashboard writes:
+
+- `reports/dashboard_uart.xml` — UART campaign results;
+- `reports/dashboard_hil.xml` — HIL campaign results;
+- `reports/results.xml` — full regression JUnit report;
+- `reports/test_report.html` — self-contained HTML report for the full campaign.
+
+The local HTML report is opened with the **Open HTML report** button.
+
+## GitHub Actions status in the dashboard
+
+The dashboard reads the latest run for the repository and workflow configured in `dashboard/ci_config.json`. The default is:
+
+```json
+{
+  "repository": "asmadaoud40-ui/stm32-hil-validation-dashboard",
+  "workflow_file": "hil-ci.yml",
+  "branch": "main",
+  "refresh_interval_seconds": 300
+}
+```
+
+The configured repository is public, so no token is required for read-only status. If the repository is made private, set a GitHub token with read access to Actions in the `GITHUB_TOKEN` environment variable; do not hard-code the token in source files or commit it.
+
+The dashboard reports the real workflow state. A workflow can be triggered by a push but still be cancelled if no self-hosted runner is online. Build, flash, HIL, and artifact-upload labels are read from the workflow job steps; they are not fabricated local statuses.
+
+## Important validation boundary
+
+The full HIL campaign uses physical hardware. The GitHub workflow therefore requires the self-hosted Windows runner to have the STM32 board, the Arduino observer, the Bluetooth connection, Keil, and STM32CubeProgrammer available. A GitHub-hosted runner cannot replace that connected bench for these physical tests.
+
+
+## Console and manual-command responsiveness update
+
+This update gives the serial console more vertical space, slightly prioritizes it over the GitHub details panel, and keeps the test table usable. Manual DUT commands use a temporary 0.8 s read timeout (the pytest serial timeout is unchanged at 2 s). The STM32 response is displayed before the Arduino HIL read completes, and separate timing entries show how long each response took. `ALL ON` reads its two response lines; `ALL OFF` reads its single combined response line as implemented in the included firmware.
+
+GitHub Actions status retrieval is read-only. The UART/HIL/report buttons run local pytest campaigns and do not dispatch a GitHub workflow. The dashboard checks the latest GitHub workflow periodically; duplicate log entries for an unchanged run are suppressed. The workflow in `.github/workflows/hil-ci.yml` remains unchanged.

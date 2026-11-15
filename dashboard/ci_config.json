@@ -1,0 +1,6 @@
+{
+  "repository": "asmadaoud40-ui/stm32-hil-validation-dashboard",
+  "workflow_file": "hil-ci.yml",
+  "branch": "main",
+  "refresh_interval_seconds": 300
+}
