@@ -2,13 +2,6 @@
 
 # STM32 HIL Validation Dashboard
 
-## Square-corner and clipping fix
-
-This update makes all dashboard surfaces rectangular (0 px corner radius), including the header, panels, status labels, buttons, table, console, and scrollbars. It also increases the LED monitor and campaign-summary row heights, gives the LED state labels and all four counters explicit minimum heights, and adjusts the right-column spacing so that `OFF`, `TOTAL`, `PASSED`, `FAILED`, and `SKIPPED` remain fully visible. The test table is slightly shorter to preserve the serial console and keep the layout within the existing screen footprint.
-
-The STM32 command handling, serial timing behavior, pytest campaigns, report generation, GitHub Actions polling, and workflow YAML are unchanged in this update. Only `dashboard/main.py` needs to be replaced. Close the dashboard, extract the archive into the project root, allow `dashboard/main.py` to overwrite the existing file, and relaunch with `python -u main.py` from the `dashboard` directory.
-A Python-based validation bench for an STM32F407 target. The project combines a Bluetooth serial command link, an Arduino GPIO observer, pytest regression campaigns, local HTML/XML reports, GitHub Actions CI/CD, and a PySide6 dashboard.
-
 ## System architecture
 
 - **PC → STM32 DUT:** Python, pytest, and the dashboard send commands through Bluetooth COM5 at 9600 baud. The Bluetooth module is connected to STM32 USART6.
@@ -109,26 +102,6 @@ The dashboard writes:
 - `reports/dashboard_hil.xml` — HIL campaign results;
 - `reports/results.xml` — full regression JUnit report;
 - `reports/test_report.html` — self-contained HTML report for the full campaign.
-
-The local HTML report is opened with the **Open HTML report** button.
-
-## GitHub Actions status in the dashboard
-
-The dashboard reads the latest run for the repository and workflow configured in `dashboard/ci_config.json`. The default is:
-
-```json
-{
-  "repository": "asmadaoud40-ui/stm32-hil-validation-dashboard",
-  "workflow_file": "hil-ci.yml",
-  "branch": "main",
-  "refresh_interval_seconds": 300
-}
-```
-
-The configured repository is public, so no token is required for read-only status. If the repository is made private, set a GitHub token with read access to Actions in the `GITHUB_TOKEN` environment variable; do not hard-code the token in source files or commit it.
-
-The dashboard reports the real workflow state. A workflow can be triggered by a push but still be cancelled if no self-hosted runner is online. Build, flash, HIL, and artifact-upload labels are read from the workflow job steps; they are not fabricated local statuses.
-
 
 
 
