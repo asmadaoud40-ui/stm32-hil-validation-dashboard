@@ -86,6 +86,8 @@ The dashboard provides:
 - a table and summary parsed from the most recent local JUnit XML file;
 - links to open the HTML report and reports folder;
 - the latest GitHub Actions run and its Build, Flash, HIL, and report-upload step states.
+<img width="1366" height="728" alt="dashbaord qt" src="https://github.com/user-attachments/assets/753dfbb4-c99e-461f-9416-d11e988d9acd" />
+
 
 ## Test campaigns
 
@@ -132,8 +134,3 @@ The dashboard reports the real workflow state. A workflow can be triggered by a 
 The full HIL campaign uses physical hardware. The GitHub workflow therefore requires the self-hosted Windows runner to have the STM32 board, the Arduino observer, the Bluetooth connection, Keil, and STM32CubeProgrammer available. A GitHub-hosted runner cannot replace that connected bench for these physical tests.
 
 
-## Console and manual-command responsiveness update
-
-This update gives the serial console more vertical space, slightly prioritizes it over the GitHub details panel, and keeps the test table usable. Manual DUT commands use a temporary 0.8 s read timeout (the pytest serial timeout is unchanged at 2 s). The STM32 response is displayed before the Arduino HIL read completes, and separate timing entries show how long each response took. `ALL ON` reads its two response lines; `ALL OFF` reads its single combined response line as implemented in the included firmware.
-
-GitHub Actions status retrieval is read-only. The UART/HIL/report buttons run local pytest campaigns and do not dispatch a GitHub workflow. The dashboard checks the latest GitHub workflow periodically; duplicate log entries for an unchanged run are suppressed. The workflow in `.github/workflows/hil-ci.yml` remains unchanged.
