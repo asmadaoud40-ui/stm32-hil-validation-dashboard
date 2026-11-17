@@ -129,8 +129,6 @@ The configured repository is public, so no token is required for read-only statu
 
 The dashboard reports the real workflow state. A workflow can be triggered by a push but still be cancelled if no self-hosted runner is online. Build, flash, HIL, and artifact-upload labels are read from the workflow job steps; they are not fabricated local statuses.
 
-## Important validation boundary
 
-The full HIL campaign uses physical hardware. The GitHub workflow therefore requires the self-hosted Windows runner to have the STM32 board, the Arduino observer, the Bluetooth connection, Keil, and STM32CubeProgrammer available. A GitHub-hosted runner cannot replace that connected bench for these physical tests.
 
 
