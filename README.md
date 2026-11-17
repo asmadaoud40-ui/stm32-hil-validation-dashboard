@@ -38,7 +38,7 @@ Embedded_Test_Bench_Test/
 | Bluetooth module ↔ STM32 USART6 | COM5 | 9600 | DUT commands and responses |
 | Arduino HIL observer | COM7 | 115200 | GPIO state observation |
 
-The dashboard releases the serial ports before launching a pytest campaign that needs them, then reconnects them after the campaign. Do not open COM5 or COM7 in another serial terminal while the dashboard or tests are using them.
+The dashboard releases the serial ports before launching a pytest campaign that needs them, then reconnects them after the campaign.
 
 ### Serial diagnostic scripts
 
@@ -52,7 +52,7 @@ The `reports/results.xml` file included with this project snapshot contains **21
 
 ## Installation
 
-Use Python 3.13 (the version configured in the GitHub Actions workflow).
+Use Python 3.13 
 
 ```powershell
 python -m venv .venv
